@@ -1,0 +1,80 @@
+{
+  "name": "react-flaxs",
+  "version": "0.1.0",
+  "description": "Middle layer to connect Flaxs and React components",
+  "main": "./lib/index.js",
+  "scripts": {
+    "build:lib": "babel src --out-dir lib",
+    "build:umd": "cross-env NODE_ENV=development webpack src/index.js dist/react-flaxs.js",
+    "build:umd:min": "cross-env NODE_ENV=production webpack src/index.js dist/react-flaxs.min.js",
+    "build": "npm run build:lib && npm run build:umd && npm run build:umd:min",
+    "clean": "rimraf lib dist coverage",
+    "lint": "eslint src test",
+    "prepublish": "npm run clean && npm run build",
+    "test": "mocha --compilers js:babel-register --recursive --require ./test/setup.js",
+    "test:watch": "npm test -- --watch",
+    "test:cov": "babel-node ./node_modules/isparta/bin/isparta cover ./node_modules/mocha/bin/_mocha -- --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jcperez-ch/react-flaxs"
+  },
+  "files": [
+    "dist",
+    "lib",
+    "src"
+  ],
+  "keywords": [
+    "react",
+    "reactjs",
+    "flaxs",
+    "react"
+  ],
+  "author": "JC Perez Chavez <jc.perezchavez@gmai.com> (http://github.com/jcperez-ch)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jcperez-ch/react-flaxs/issues"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.3.17",
+    "babel-core": "^6.3.26",
+    "babel-eslint": "^6.0.4",
+    "babel-loader": "^6.2.0",
+    "babel-plugin-transform-decorators-legacy": "^1.2.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "babel-register": "^6.9.0",
+    "chai": "^3.5.0",
+    "cross-env": "^1.0.7",
+    "eslint": "^2.11.1",
+    "eslint-config-airbnb": "9.0.1",
+    "eslint-plugin-import": "^1.8.1",
+    "eslint-plugin-jsx-a11y": "^1.3.0",
+    "eslint-plugin-react": "^5.1.1",
+    "expect": "^1.8.0",
+    "glob": "^6.0.4",
+    "isparta": "^4.0.0",
+    "istanbul": "^0.4.3",
+    "jsdom": "~5.4.3",
+    "mocha": "^2.2.5",
+    "react": "^0.14.0",
+    "react-addons-test-utils": "^0.14.0",
+    "react-dom": "^0.14.0",
+    "rimraf": "^2.3.4",
+    "webpack": "^1.13.1"
+  },
+  "dependencies": {
+    "flaxs": "^1.0.3",
+    "hoist-non-react-statics": "^1.0.6",
+    "invariant": "^2.0.0",
+    "lodash": "^4.2.0"
+  },
+  "peerDependencies": {
+    "react": "^0.14.0 || ^15.0.0-0",
+    "flaxs": "^1.0.3"
+  },
+  "browserify": {
+    "transform": []
+  }
+}
