@@ -20,9 +20,9 @@
     "url": "https://github.com/jcperez-ch/react-flaxs"
   },
   "files": [
-    "dist",
-    "lib",
-    "src"
+    "dist/",
+    "lib/",
+    "webpack.config.js"
   ],
   "keywords": [
     "react",

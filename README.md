@@ -25,7 +25,7 @@ You can redefine the final props of your component based on the given props usin
 Example, let's say that if you want your component `ConnectedComponent` to ignore the `somethingElse` state if you specify a `ignore` attribute in the parent component using this form:
 
 ```javascript
-@multiConnect(mapMasterStateToProps, mapOwnProps)
+@connect(mapMasterStateToProps, mapOwnProps)
 ```
 
 Here an example:

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { assign, forEach, identity, isEmpty, reduce, some } from 'lodash';
+import { assign, forEach, identity, includes, isEmpty, omitBy, reduce, some } from 'lodash';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import { flaxs } from 'flaxs';
 
@@ -19,8 +19,8 @@ function getDisplayName(WrappedComponent) {
  * @param  {object} ownProps
  * @return {object}
  */
-const defaultMapOwnProps = (mapedStateToProps, ownProps) => ({
-  ...mapedStateToProps,
+const defaultMapOwnProps = (stateProps, ownProps) => ({
+  ...stateProps,
   ...ownProps,
 });
 
@@ -41,45 +41,51 @@ export default function connect(
       static displayName = `multi(${getDisplayName(ReactClass)})`;
       constructor(props, context) {
         super(props, context);
-        this.state = this.getMountedState();
+        this.state = this.getConnectedProps();
         this.storeDidChange = this.storeDidChange.bind(this);
       }
       componentDidMount() {
+        flaxs.store.addChangeListener(this.storeDidChange);
         forEach(connectedStores, store => {
           store.addChangeListener(this.storeDidChange);
         });
         this.isComponentMounted = true;
       }
       shouldComponentUpdate(nextProps, nextState, nextContext) {
-        const nextConnectedProps = this.getConnectedProps(nextProps, nextState);
-        const connectedProps = this.getConnectedProps();
-        return nextContext !== this.context || some(nextConnectedProps, (nextProp, propKey) =>
-          nextProp !== connectedProps[propKey]
+        return (
+          nextContext !== this.context ||
+          some(nextState, (nextProp, propKey) => nextProp !== this.state[propKey]) ||
+          some(nextProps, (nextProp, propKey) => nextProp !== this.props[propKey])
         );
       }
       componentWillUnmount() {
+        flaxs.store.removeChangeListener(this.storeDidChange);
         forEach(connectedStores, store => {
           store.removeChangeListener(this.storeDidChange);
         });
         this.isComponentMounted = false;
       }
-      getMountedState() {
-        return reduce(connectedStores, (accStores, store, storeKey) => (
-          assign(accStores, {
-            [storeKey]: store.state,
-          })
-        ), {});
-      }
       getConnectedProps(props = this.props, state = this.getMountedState()) {
         return mapOwnProps(mapStateToProps(state), props);
       }
-
+      getMountedState() {
+        return reduce(connectedStores, (accStores, store, storeKey) => {
+          const { state, ...storeAttributes } = store;
+          return assign(accStores, {
+            [storeKey]: {
+              ...omitBy(storeAttributes, (attr, key) => (
+                includes(['on', 'once', 'mixin', 'callback', 'emit'], key)
+              )),
+              ...state,
+            },
+          });
+        }, { ...flaxs.store.state });
+      }
       storeDidChange() {
-        const newState = flaxs.store.state;
         // FIXME since events occur asynchronously, we can have the case where the component
         // listens for a change in the store, but the change occurs after it gets unmounted.
-        if (this.isComponentMounted && newState !== this.getMountedState()) {
-          this.setState(newState);
+        if (this.isComponentMounted) {
+          this.setState(this.getConnectedProps());
         }
       }
       render() {

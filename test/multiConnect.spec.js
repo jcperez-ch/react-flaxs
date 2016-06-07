@@ -19,7 +19,7 @@ describe('React', () => {
 
   const sessionStore = flaxs.createStore({
     getUser: () => sessionStore.state.user.username,
-    isMocked: () => !sessionStore.state.isReal,
+    isMocked: () => !sessionStore.state.user.isReal,
   }, () => true, {
     user: {
       username: 'flaxs',
@@ -37,23 +37,31 @@ describe('React', () => {
     },
   });
 
-  it('should have a flaxs store state ready', () => {
-    expect(sessionStore.state).toNotBe(undefined);
-    expect(optionsStore.state).toNotBe(undefined);
-    expect(optionsStore.state.options.randomNumber).toBe(10);
-  });
-
   describe('multiConnect', () => {
+    let MyConnectedComponent;
+    let renderer;
+
+    beforeEach(() => {
+      MyConnectedComponent = () => <div>empty</div>;
+      renderer = TestUtils.createRenderer();
+    });
+
+    it('should have a flaxs store state ready', () => {
+      expect(sessionStore.state).toNotBe(undefined);
+      expect(optionsStore.state).toNotBe(undefined);
+      expect(optionsStore.state.options.randomNumber).toBe(10);
+    });
+
     const defaultConnector = multiConnect(state => ({
       isReal: state.session.user.isReal,
-      skipLogin: state.options.options.skipLogin || !!state.session.user.username,
+      skipLogin: state.options.options.skipLogin,
     }), {
       session: sessionStore,
       options: optionsStore,
     });
 
     const otherConnector = multiConnect(state => ({
-      isReal: state.session.user.isReal,
+      isReal: !state.session.isMocked(),
       skipLogin: state.options.options.skipLogin,
     }), {
       session: sessionStore,
@@ -68,33 +76,27 @@ describe('React', () => {
       return { ...stateProps, noSkip: true };
     });
 
-    const MyConnectedComponent = () => <div>empty</div>;
-
     it('should inject connected props and own properly', () => {
-      const renderer = TestUtils.createRenderer();
       const ConnectedComponent = defaultConnector(MyConnectedComponent);
       renderer.render(
         <ConnectedComponent />
       );
-      expect(renderer.getRenderOutput()).toEqualJSX(<MyConnectedComponent skipLogin />);
+      expect(renderer.getRenderOutput()).toEqualJSX(<MyConnectedComponent />);
+    });
+
+    it('should inject connected props and own properly again', () => {
       sessionStore.mergeState('user', {
         ...sessionStore.state.user,
         isReal: true,
       });
+      const ConnectedComponent = defaultConnector(MyConnectedComponent);
       renderer.render(
         <ConnectedComponent />
       );
-      expect(renderer.getRenderOutput()).toEqualJSX(<MyConnectedComponent skipLogin isReal />);
-    });
-
-    it('should throw an immutable exception if trying to modify any attribute of the store', () => {
-      expect(() => {
-        optionsStore.state.options = {};
-      }).toThrow(/read only/);
+      expect(renderer.getRenderOutput()).toEqualJSX(<MyConnectedComponent isReal />);
     });
 
     it('should merge ownProps to stateProps properly', () => {
-      const renderer = TestUtils.createRenderer();
       const ConnectedComponent = otherConnector(MyConnectedComponent);
       renderer.render(
         <ConnectedComponent skipThis="skipThis" skipThat="skipThat" dontSkip="dontSkip" />
@@ -106,12 +108,12 @@ describe('React', () => {
         ...optionsStore.state.options,
         skipLogin: true,
       });
-      renderer.render(
-        <ConnectedComponent skipThis="skipThis" skipThat="skipThat" dontSkip="dontSkip" />
-      );
-      expect(renderer.getRenderOutput()).toEqualJSX(
-        <MyConnectedComponent skipThis="skipThis" skipThat="skipThat" />
-      );
+    });
+
+    it('should throw an immutable exception if trying to modify any attribute of the store', () => {
+      expect(() => {
+        optionsStore.state.options = {};
+      }).toThrow(/read only/);
     });
   });
 });
