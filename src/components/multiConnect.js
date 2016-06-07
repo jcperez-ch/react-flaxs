@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { identity, some } from 'lodash';
+import { assign, forEach, identity, isEmpty, reduce, some } from 'lodash';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import { flaxs } from 'flaxs';
 
@@ -26,18 +26,28 @@ const defaultMapOwnProps = (mapedStateToProps, ownProps) => ({
 
 export default function connect(
   mapStateToProps = identity,
-  mapOwnProps = defaultMapOwnProps,
+  connectedStores = {},
+  mapOwnProps = defaultMapOwnProps
 ) {
+  if (process.env.NODE_ENV !== 'production' && isEmpty(connectedStores)) {
+    /* eslint-disable no-console */
+    console.error(`You need to connect your stores in the second attribute
+      of the multiConnect decorator`);
+    /* eslint-enable no-console */
+    return ReactClass => ReactClass;
+  }
   return function connection(ReactClass) {
     class Connection extends Component {
-      static displayName = `_(${getDisplayName(ReactClass)})_`;
+      static displayName = `multi(${getDisplayName(ReactClass)})`;
       constructor(props, context) {
         super(props, context);
-        this.state = flaxs.store.state;
+        this.state = this.getMountedState();
         this.storeDidChange = this.storeDidChange.bind(this);
       }
       componentDidMount() {
-        flaxs.store.addChangeListener(this.storeDidChange);
+        forEach(connectedStores, store => {
+          store.addChangeListener(this.storeDidChange);
+        });
         this.isComponentMounted = true;
       }
       shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -48,10 +58,19 @@ export default function connect(
         );
       }
       componentWillUnmount() {
-        flaxs.store.removeChangeListener(this.storeDidChange);
+        forEach(connectedStores, store => {
+          store.removeChangeListener(this.storeDidChange);
+        });
         this.isComponentMounted = false;
       }
-      getConnectedProps(props = this.props, state = this.state) {
+      getMountedState() {
+        return reduce(connectedStores, (accStores, store, storeKey) => (
+          assign(accStores, {
+            [storeKey]: store.state,
+          })
+        ), {});
+      }
+      getConnectedProps(props = this.props, state = this.getMountedState()) {
         return mapOwnProps(mapStateToProps(state), props);
       }
 
@@ -59,7 +78,7 @@ export default function connect(
         const newState = flaxs.store.state;
         // FIXME since events occur asynchronously, we can have the case where the component
         // listens for a change in the store, but the change occurs after it gets unmounted.
-        if (this.isComponentMounted && newState !== this.state) {
+        if (this.isComponentMounted && newState !== this.getMountedState()) {
           this.setState(newState);
         }
       }

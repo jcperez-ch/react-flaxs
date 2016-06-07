@@ -1,1 +1,2 @@
-export { connect } from './components/connect';
+export connect from './components/connect';
+export multiConnect from './components/multiConnect';
