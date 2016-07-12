@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { identity, some } from 'lodash';
+import { identity, some } from '../lodash';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import { flaxs } from 'flaxs';
 

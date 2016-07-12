@@ -2,7 +2,7 @@ import expect from 'expect';
 import expectJSX from 'expect-jsx';
 import TestUtils from 'react-addons-test-utils';
 import React from 'react';
-import { pickBy, startsWith } from 'lodash';
+import { pickBy, startsWith } from '../src/lodash';
 
 import { flaxs } from 'flaxs';
 import { multiConnect } from '../src/';

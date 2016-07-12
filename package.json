@@ -61,19 +61,30 @@
     "mocha": "^2.2.5",
     "react": "^0.14.0",
     "react-addons-test-utils": "^15.1.0",
-    "react-dom": "^0.14.0",
+    "react-dom": "^15.2.1",
     "rimraf": "^2.3.4",
     "webpack": "^1.13.1"
   },
   "dependencies": {
-    "flaxs": "^1.0.3",
+    "flaxs": "^1.0.4",
     "hoist-non-react-statics": "^1.0.6",
     "invariant": "^2.0.0",
-    "lodash": "^4.2.0"
+    "lodash.assign": "^4.0.9",
+    "lodash.every": "^4.4.0",
+    "lodash.foreach": "^4.3.0",
+    "lodash.identity": "^3.0.0",
+    "lodash.includes": "^4.1.3",
+    "lodash.isempty": "^4.2.1",
+    "lodash.mapvalues": "^4.4.0",
+    "lodash.omitby": "^4.4.0",
+    "lodash.pickby": "^4.4.0",
+    "lodash.reduce": "^4.4.0",
+    "lodash.some": "^4.4.0",
+    "lodash.startswith": "^4.1.0"
   },
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0-0",
-    "flaxs": "^1.0.3"
+    "flaxs": "^1.0.4"
   },
   "browserify": {
     "transform": []

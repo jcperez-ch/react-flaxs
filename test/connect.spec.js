@@ -3,8 +3,8 @@ import expectJSX from 'expect-jsx';
 import TestUtils from 'react-addons-test-utils';
 import React from 'react';
 
-import { mapValues } from 'lodash';
 import Flaxs, { flaxs } from 'flaxs';
+import { mapValues } from '../src/lodash';
 import { connect } from '../src/';
 
 expect.extend(expectJSX);
