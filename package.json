@@ -1,6 +1,6 @@
 {
   "name": "react-flaxs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Middle layer to connect Flaxs and React components",
   "main": "./lib/index.js",
   "scripts": {
