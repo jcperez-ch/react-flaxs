@@ -83,7 +83,7 @@
     "lodash.startswith": "^4.1.0"
   },
   "peerDependencies": {
-    "react": "^0.14.0 || ^15.0.0-0",
+    "react": "^0.13.3 || ^0.14.0 || ^15.0.0-0",
     "flaxs": "^1.0.4"
   },
   "browserify": {
