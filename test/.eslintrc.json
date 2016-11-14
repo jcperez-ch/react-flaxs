@@ -1,0 +1,11 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "mocha": true
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": ["off", {"devDependencies": ["*.test.js", "*.spec.js"]}],
+    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }]
+  }
+}

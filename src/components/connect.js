@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { identity, some } from '../lodash';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import { flaxs } from 'flaxs';
+
+import { identity, some } from '../lodash';
 
 /**
  * Took it from connect module in redux.
@@ -44,7 +45,7 @@ export default function connect(
         const nextConnectedProps = this.getConnectedProps(nextProps, nextState);
         const connectedProps = this.getConnectedProps();
         return nextContext !== this.context || some(nextConnectedProps, (nextProp, propKey) =>
-          nextProp !== connectedProps[propKey]
+          nextProp !== connectedProps[propKey],
         );
       }
       componentWillUnmount() {

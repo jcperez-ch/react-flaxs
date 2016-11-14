@@ -2,9 +2,9 @@ import expect from 'expect';
 import expectJSX from 'expect-jsx';
 import TestUtils from 'react-addons-test-utils';
 import React from 'react';
-import { pickBy, startsWith } from '../src/lodash';
-
 import { flaxs } from 'flaxs';
+
+import { pickBy, startsWith } from '../src/lodash';
 import { multiConnect } from '../src/';
 
 expect.extend(expectJSX);
@@ -79,7 +79,7 @@ describe('React', () => {
     it('should inject connected props and own properly', () => {
       const ConnectedComponent = defaultConnector(MyConnectedComponent);
       renderer.render(
-        <ConnectedComponent />
+        <ConnectedComponent />,
       );
       expect(renderer.getRenderOutput()).toEqualJSX(<MyConnectedComponent />);
     });
@@ -91,7 +91,7 @@ describe('React', () => {
       });
       const ConnectedComponent = defaultConnector(MyConnectedComponent);
       renderer.render(
-        <ConnectedComponent />
+        <ConnectedComponent />,
       );
       expect(renderer.getRenderOutput()).toEqualJSX(<MyConnectedComponent isReal />);
     });
@@ -99,10 +99,10 @@ describe('React', () => {
     it('should merge ownProps to stateProps properly', () => {
       const ConnectedComponent = otherConnector(MyConnectedComponent);
       renderer.render(
-        <ConnectedComponent skipThis="skipThis" skipThat="skipThat" dontSkip="dontSkip" />
+        <ConnectedComponent skipThis="skipThis" skipThat="skipThat" dontSkip="dontSkip" />,
       );
       expect(renderer.getRenderOutput()).toEqualJSX(
-        <MyConnectedComponent noSkip isReal />
+        <MyConnectedComponent noSkip isReal />,
       );
       optionsStore.mergeState('options', {
         ...optionsStore.state.options,

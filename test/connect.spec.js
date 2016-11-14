@@ -47,7 +47,7 @@ describe('React', () => {
       const renderer = TestUtils.createRenderer();
       const ConnectedComponent = defaultConnector(Table);
       renderer.render(
-        <ConnectedComponent four={40} />
+        <ConnectedComponent four={40} />,
       );
       const output = renderer.getRenderOutput();
       expect(output).toEqualJSX(<Table four={40} dos={2} tres={3} uno={1} />);
